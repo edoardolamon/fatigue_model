@@ -6,6 +6,8 @@ function f_tot = fatigue7DoFs(q)
 mdl_LWR
 for i=1:7
     LWR.links(i).m = 2.0;
+    LWR.links(i).Jm = 0;
+    LWR.links(i).G = 1;
 end
 
 % External Force
