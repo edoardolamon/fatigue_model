@@ -6,6 +6,9 @@ t = [0:.01:1]';
 %% Model
 mdl_LWR
 n_dofs = size(links,2);
+for i=1:n_dofs
+    LWR.links(i).m = 2.0;
+end
 
 % initial configuration
 affineFromBaseToEE = LWR.fkine(qz);
@@ -16,7 +19,7 @@ q0 = LWR.ikcon(affineFromBaseToEE);
 % q0 = rand(1,n_dofs);
 % q0 = [0 0 0 0 0 0 0];
 
-disp("INITIAL CONFIGURATION")
+disp('INITIAL CONFIGURATION')
 LWR.plot(q0);
 
 % affineFromBaseToEE = LWR.fkine(q0)
@@ -48,7 +51,7 @@ delete(h);
 affineFromBaseToEE = LWR.fkine(q_opt);
 x_opt = affineFromBaseToEE.t;
 
-disp("OPTIMIZED CONFIGURATION")
+disp('OPTIMIZED CONFIGURATION')
 traj = jtraj(q0, q_opt, t);
 
 LWR.plot(q_opt);
@@ -75,7 +78,7 @@ delete(h);
 [q_opt_constr, fatigue_opt_constr] = fmincon(@fatigue7DoFs,q0,A,b,Aeq,beq,q_lb,q_ub); %,nonlcon,options);
 x_opt_constr = LWR.fkine(q_opt_constr).t;
 [~, c_constr] = cartesianEE7DoFsConstraint(q_opt_constr);
-disp("INTERIOR-POINT CONFIGURATION")
+disp('INTERIOR-POINT CONFIGURATION')
 LWR.plot(q_opt_constr);
 h = quiver3(x_opt_constr(1), x_opt_constr(2), x_opt_constr(3), f_ext_scaled(1), f_ext_scaled(2), f_ext_scaled(3));
 
@@ -86,7 +89,7 @@ options_sqp = optimoptions(@fmincon, 'Algorithm', 'sqp', 'MaxFunctionEvaluations
 [q_opt_constr_sqp, fatigue_opt_constr_sqp] = fmincon(@fatigue7DoFs,q0,A,b,Aeq,beq,q_lb,q_ub,nonlcon,options_sqp);
 x_opt_constr_sqp = LWR.fkine(q_opt_constr_sqp).t;
 [~, c_constr_sqp] = cartesianEE7DoFsConstraint(q_opt_constr_sqp);
-disp("SQP CONFIGURATION")
+disp('SQP CONFIGURATION')
 LWR.plot(q_opt_constr_sqp);
 h = quiver3(x_opt_constr_sqp(1), x_opt_constr_sqp(2), x_opt_constr_sqp(3), f_ext_scaled(1), f_ext_scaled(2), f_ext_scaled(3));
 
@@ -97,7 +100,7 @@ options_activeSet = optimoptions(@fmincon, 'Algorithm', 'active-set');
 [q_opt_constr_activeSet, fatigue_opt_constr_activeSet] = fmincon(@fatigue7DoFs,q0,A,b,Aeq,beq,q_lb,q_ub,nonlcon,options_activeSet);
 x_opt_constr_activeSet = LWR.fkine(q_opt_constr_activeSet).t;
 [~, c_constr_activeSet] = cartesianEE7DoFsConstraint(q_opt_constr_activeSet);
-disp("ACTIVE-SET CONFIGURATION")
+disp('ACTIVE-SET CONFIGURATION')
 LWR.plot(q_opt_constr_activeSet);
 h = quiver3(x_opt_constr_activeSet(1), x_opt_constr_activeSet(2), x_opt_constr_activeSet(3), f_ext_scaled(1), f_ext_scaled(2), f_ext_scaled(3));
 

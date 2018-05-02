@@ -4,6 +4,9 @@ function [c, ceq] = cartesianEE7DoFsConstraint(q)
 
 % Model
 mdl_LWR;
+for i=1:7
+    LWR.links(i).m = 2.0;
+end
 
 % Initial configuration
 % q0 = [0 0 0 0 0 0 0];
