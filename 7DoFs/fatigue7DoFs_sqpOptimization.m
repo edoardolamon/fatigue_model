@@ -35,10 +35,10 @@ f_ext_scaled = 0.4*f_ext;
 %% Optimization
 
 % constraints
-q_lb = -3/4*pi*ones(n_dofs,1);
-q_ub = 3/4*pi*ones(n_dofs,1);
-% q_lb = [];
-% q_ub = [];
+% q_lb = -3/4*pi*ones(n_dofs,1);
+% q_ub = 3/4*pi*ones(n_dofs,1);
+q_lb = [];
+q_ub = [];
 A = [];
 b = [];
 Aeq = [];

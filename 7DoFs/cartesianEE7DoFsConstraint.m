@@ -6,12 +6,15 @@ function [c, ceq] = cartesianEE7DoFsConstraint(q)
 mdl_LWR;
 for i=1:7
     LWR.links(i).m = 2.0;
+    LWR.links(i).Jm = 0;
+    LWR.links(i).G = 1;
 end
 
 % Initial configuration
 % q0 = [0 0 0 0 0 0 0];
 % x_ee = LWR.fkine(q0).t;
-x_ee = [0.4; 0.6; -0.2];
+% x_ee = [0.4; 0.6; -0.2];
+x_ee = [0.0; 0.0; 0.79];
 
 % Nonlinear constraint
 c = [];
