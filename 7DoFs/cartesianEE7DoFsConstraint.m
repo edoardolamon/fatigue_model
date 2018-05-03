@@ -13,8 +13,8 @@ end
 % Initial configuration
 % q0 = [0 0 0 0 0 0 0];
 % x_ee = LWR.fkine(q0).t;
-% x_ee = [0.4; 0.6; -0.2];
-x_ee = [0.0; 0.0; 0.79];
+x_ee = [0.4; 0.3; 0.2];
+%x_ee = [0.0; 0.0; 0.79];
 
 % Nonlinear constraint
 c = [];

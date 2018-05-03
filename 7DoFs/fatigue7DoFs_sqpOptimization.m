@@ -7,7 +7,7 @@ if (exist('h','var'))
 end
 
 %% Model
-mdl_LWR
+mdl_kukaLWR
 n_dofs = size(links,2);
 for i=1:n_dofs
     LWR.links(i).m = 2.0;
@@ -26,8 +26,8 @@ end
 
 f_ext = zeros(6,1);
 f_ext(1) = 0;
-f_ext(2) = 0;
-f_ext(3) = 1;
+f_ext(2) = 1;
+f_ext(3) = 0;
 
 f_ext_scaled = 0.4*f_ext;
 
@@ -50,6 +50,7 @@ nonlcon = @cartesianEE7DoFsConstraint;
 options_sqp = optimoptions(@fmincon, 'Algorithm', 'sqp', 'Display', 'off');
 trials = 10;
 fatigue_opt_constr_sqp = 1000;
+change_counter = 0;
 
 for i=1:trials
     q0 = rand(1,n_dofs) - 0.5;
@@ -58,6 +59,7 @@ for i=1:trials
     if (fatigue_opt_constr_sqp_tmp < fatigue_opt_constr_sqp)
         fatigue_opt_constr_sqp = fatigue_opt_constr_sqp_tmp;
         q_opt_constr_sqp = q_opt_constr_sqp_tmp;
+        change_counter = change_counter + 1;
     end
 end
 

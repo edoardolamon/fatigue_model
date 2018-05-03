@@ -13,8 +13,8 @@ end
 % External Force
 f_ext = zeros(6,1);
 f_ext(1) = 0;
-f_ext(2) = 0;
-f_ext(3) = 1;
+f_ext(2) = 1;
+f_ext(3) = 0;
 
 % Fatigue model
 T = 1;
@@ -30,10 +30,6 @@ f = zeros(7,1);
 % tau_grav = [link_mass(1)*g'*p1; link_mass(2)*g'*p2];
 tau_grav = LWR.gravload(q)';
 % tau_grav = zeros(7,1);
-% 
-% for (i=1:7)
-%     
-% end
 lambda = 0.1;
 
 %tau = LWR.jacob0(q)'* f_ext;
