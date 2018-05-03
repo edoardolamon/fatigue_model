@@ -4,7 +4,7 @@
 t = [0:.01:1]';
 
 %% Model
-mdl_LWR
+mdl_kukaLWR
 n_dofs = size(links,2);
 for i=1:n_dofs
     LWR.links(i).m = 2.0;

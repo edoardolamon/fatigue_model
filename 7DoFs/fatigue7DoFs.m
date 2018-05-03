@@ -3,7 +3,7 @@ function f_tot = fatigue7DoFs(q)
 %   Detailed explanation goes here
 
 % Model
-mdl_LWR
+mdl_kukaLWR
 for i=1:7
     LWR.links(i).m = 2.0;
     LWR.links(i).Jm = 0;
@@ -37,8 +37,8 @@ tau_grav = LWR.gravload(q)';
 lambda = 0.1;
 
 %tau = LWR.jacob0(q)'* f_ext;
-tau = tau_grav;
-%tau = LWR.jacob0(q)'* f_ext + lambda*tau_grav;
+% tau = tau_grav;
+tau = LWR.jacob0(q)'* f_ext + lambda*tau_grav;
 f_tot = 0;
 
 for i=1:7

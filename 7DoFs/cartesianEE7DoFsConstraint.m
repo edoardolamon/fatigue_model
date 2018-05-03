@@ -3,7 +3,7 @@ function [c, ceq] = cartesianEE7DoFsConstraint(q)
 %   Detailed explanation goes here
 
 % Model
-mdl_LWR;
+mdl_kukaLWR;
 for i=1:7
     LWR.links(i).m = 2.0;
     LWR.links(i).Jm = 0;
