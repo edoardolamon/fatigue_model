@@ -1,20 +1,20 @@
-function f_tot = fatigue7DoFs(q)
+function f_tot = fatigue7DoFs(LWR, q, f_ext)
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
 
 % Model
-mdl_kukaLWR
-for i=1:7
-    LWR.links(i).m = 2.0;
-    LWR.links(i).Jm = 0;
-    LWR.links(i).G = 1;
-end
+% mdl_kukaLWR
+% for i=1:7
+%     LWR.links(i).m = 2.0;
+%     LWR.links(i).Jm = 0;
+%     LWR.links(i).G = 1;
+% end
 
 % External Force
-f_ext = zeros(6,1);
-f_ext(1) = 0;
-f_ext(2) = 1;
-f_ext(3) = 0;
+% f_ext = zeros(6,1);
+% f_ext(1) = 0;
+% f_ext(2) = 0;
+% f_ext(3) = 1;
 
 % Fatigue model
 T = 1;
