@@ -1,9 +1,11 @@
-close all
+% close all
 clear all
 
 
 if (exist('h','var'))
     delete(h)
+    delete(s1)
+    alpha 1
 end
 
 %% Model
@@ -25,9 +27,9 @@ mdl_kukaLWR
 % x0 = affineFromBaseToEE.t;
 
 f_ext = zeros(6,1);
-f_ext(1) = 0;
+f_ext(1) = 1;
 f_ext(2) = 0;
-f_ext(3) = 1;
+f_ext(3) = 0;
 
 f_ext_scaled = 0.4/norm(f_ext)*f_ext;
 
@@ -37,14 +39,14 @@ f_ext_scaled = 0.4/norm(f_ext)*f_ext;
 % constraints
 q_lb = -3/4*pi*ones(n_dofs,1);
 q_ub = 3/4*pi*ones(n_dofs,1);
-%q_lb = [];
-%q_ub = [];
+% q_lb = [];
+% q_ub = [];
 A = [];
 b = [];
 Aeq = [];
 beq = [];
 x_ee = [0.4; 0.3; 0.2];
-radius = 0.2;
+radius = 0.1;
 % nonlcon = [];
 cartPointCon = @(q) cartesianEE7DoFsConstraint(LWR,q,x_ee);
 cartSphereCon = @(q) cartesianEESphere7DoFsConstraint(LWR,q,x_ee,radius);
@@ -68,7 +70,7 @@ for i=1:trials
         q_opt_constr_sqp = q_opt_constr_sqp_tmp;
         change_counter = change_counter + 1;
     end
-    [q_opt_constr_sqp_sphere_tmp, fatigue_opt_constr_sqp_sphere_tmp] = fmincon(@(q)fatigue7DoFs(LWR,q,f_ext),q0,A,b,Aeq,beq,q_lb,q_ub,cartSphereCon,options_sqp);
+    [q_opt_constr_sqp_sphere_tmp, fatigue_opt_constr_sqp_sphere_tmp] = fmincon(@(q)fatigue7DoFs(LWR,q,f_ext),q_opt_constr_sqp,A,b,Aeq,beq,q_lb,q_ub,cartSphereCon,options_sqp);
     if (fatigue_opt_constr_sqp_sphere_tmp < fatigue_opt_constr_sqp_sphere)
         fatigue_opt_constr_sqp_sphere = fatigue_opt_constr_sqp_sphere_tmp;
         q_opt_constr_sqp_sphere = q_opt_constr_sqp_sphere_tmp;

@@ -1,6 +1,6 @@
 % MODEL: Kuka, LWR, 7DOF, standard_DH
 
-d1 =0.4; d2 = 0.39;
+d1 =0.4; d2 = 0.39; ee_link = 0.3;
 
 %All link lengths and offsets are measured in m
 clear L
@@ -12,7 +12,7 @@ links = [
 		Link([0        0           0       pi/2])
 		Link([0        d2          0       pi/2])
 		Link([0        0           0       -pi/2])
-		Link([0        0           0       0])
+		Link([0        ee_link           0       0])
 	];
 
 LWR = SerialLink(links, 'name', 'Kuka LWR');
