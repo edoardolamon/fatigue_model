@@ -27,7 +27,7 @@ mdl_kukaLWR
 % x0 = affineFromBaseToEE.t;
 
 f_ext = zeros(6,1);
-f_ext(1) = 1;
+f_ext(1) = 100;
 f_ext(2) = 0;
 f_ext(3) = 0;
 
@@ -46,7 +46,7 @@ b = [];
 Aeq = [];
 beq = [];
 x_ee = [0.4; 0.3; 0.2];
-radius = 0.1;
+radius = 0.19;
 % nonlcon = [];
 cartPointCon = @(q) cartesianEE7DoFsConstraint(LWR,q,x_ee);
 cartSphereCon = @(q) cartesianEESphere7DoFsConstraint(LWR,q,x_ee,radius);
@@ -61,6 +61,26 @@ change_counter = 0;
 
 disp('GLOBAL SEARCH ...')
 % Search for a global optimum
+% for i=1:trials
+%     disp(['trial ' num2str(i)])
+%     q0 = rand(1,n_dofs) - 0.5;
+%     fatigue0 = fatigue7DoFs(LWR,q0,f_ext);
+%     [q_opt_constr_sqp_tmp, fatigue_opt_constr_sqp_tmp] = fmincon(@(q)fatigue7DoFs(LWR,q,f_ext),q0,A,b,Aeq,beq,q_lb,q_ub,cartPointCon,options_sqp);
+%     if (fatigue_opt_constr_sqp_tmp < fatigue_opt_constr_sqp)
+%         fatigue_opt_constr_sqp = fatigue_opt_constr_sqp_tmp;
+%         q_opt_constr_sqp = q_opt_constr_sqp_tmp;
+%         change_counter = change_counter + 1;
+%     end
+%     [q_opt_constr_sqp_sphere_tmp, fatigue_opt_constr_sqp_sphere_tmp] = fmincon(@(q)fatigue7DoFs(LWR,q,f_ext),q_opt_constr_sqp,A,b,Aeq,beq,q_lb,q_ub,cartSphereCon,options_sqp);
+%     if (fatigue_opt_constr_sqp_sphere_tmp < fatigue_opt_constr_sqp_sphere)
+%         fatigue_opt_constr_sqp_sphere = fatigue_opt_constr_sqp_sphere_tmp;
+%         q_opt_constr_sqp_sphere = q_opt_constr_sqp_sphere_tmp;
+%     end
+%     
+% end
+
+radius_tmp = 0.01:0.02:0.2;
+
 for i=1:trials
     q0 = rand(1,n_dofs) - 0.5;
     fatigue0 = fatigue7DoFs(LWR,q0,f_ext);
@@ -70,15 +90,18 @@ for i=1:trials
         q_opt_constr_sqp = q_opt_constr_sqp_tmp;
         change_counter = change_counter + 1;
     end
-    [q_opt_constr_sqp_sphere_tmp, fatigue_opt_constr_sqp_sphere_tmp] = fmincon(@(q)fatigue7DoFs(LWR,q,f_ext),q_opt_constr_sqp,A,b,Aeq,beq,q_lb,q_ub,cartSphereCon,options_sqp);
-    if (fatigue_opt_constr_sqp_sphere_tmp < fatigue_opt_constr_sqp_sphere)
-        fatigue_opt_constr_sqp_sphere = fatigue_opt_constr_sqp_sphere_tmp;
-        q_opt_constr_sqp_sphere = q_opt_constr_sqp_sphere_tmp;
-%         change_counter = change_counter + 1;
+    for j=1:length(radius_tmp)
+       cartSphereCon = @(q) cartesianEESphere7DoFsConstraint(LWR,q,x_ee,radius_tmp(j));
+       [q_opt_constr_sqp_sphere_tmp, fatigue_opt_constr_sqp_sphere_tmp] = fmincon(@(q)fatigue7DoFs(LWR,q,f_ext),q_opt_constr_sqp,A,b,Aeq,beq,q_lb,q_ub,cartSphereCon,options_sqp);
+       if (fatigue_opt_constr_sqp_sphere_tmp < fatigue_opt_constr_sqp_sphere)
+           fatigue_opt_constr_sqp_sphere = fatigue_opt_constr_sqp_sphere_tmp;
+           q_opt_constr_sqp_sphere = q_opt_constr_sqp_sphere_tmp;
+           radius = radius_tmp(j);
+       end
     end
-    
-    
+    disp(['Trial ' num2str(i) ' computed.'])
 end
+
 disp('DONE !')
 
 % disp('LOCAL SEARCH ...')
@@ -118,6 +141,9 @@ delete(h);
 LWR.plot(q_opt_constr_sqp_sphere);
 h = quiver3(x_opt_constr_sqp_sphere(1), x_opt_constr_sqp_sphere(2), x_opt_constr_sqp_sphere(3), f_ext_scaled(1), f_ext_scaled(2), f_ext_scaled(3));
 pause;
+
+data_name = ['../data/opt_conf_' '.mat']; %num2str(clock)
+save(data_name, 'LWR', 'f_ext', 'x_ee', 'radius', 'q_opt_constr_sqp', 'q_opt_constr_sqp_sphere');
 
 disp('----------------------------------RESULTS-------------------------------------')
 disp(['Optimized sqp configuration (point const): ', num2str(q_opt_constr_sqp)]);
