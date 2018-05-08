@@ -5,7 +5,7 @@ clc
 %% Import saved data
 
 addpath('7DoFs')
-data_path = 'data/7DoFs_opt_conf_2018_05_08_10_19_20.mat';
+%data_path = 'data/7DoFs_opt_conf_2018_05_08_10_19_20.mat';
 data_path = 'data/7DoFs_opt_conf_2018_05_08_11_55_40.mat';
 load(data_path);
 
