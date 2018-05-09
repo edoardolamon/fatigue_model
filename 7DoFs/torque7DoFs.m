@@ -36,6 +36,5 @@ tau_tot = 0.5*(tau')*(tau);
 
 %f_tot = 1/2*(f')*(f);
 
-
 end
 

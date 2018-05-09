@@ -15,6 +15,7 @@ lambda = 1;
 % tau = LWR.jacob0(q)'* f_ext;
 % tau = tau_grav;
 tau = LWR.jacob0(q)'* f_ext + lambda*tau_grav;
+% tau_tot = 0.5*(tau')*(tau);
 fat_tot = 0;
 
 for i=1:7
