@@ -23,9 +23,12 @@ f_ext(3) = 0;
 f_ext_scaled = 0.4/norm(f_ext)*f_ext;
 
 duration = 1;
-capacity = ones(7,1);
+capacity = ones(n_dofs,1);
 % capacity = [10, 10, 10, 5, 1, 1, 1];
 % capacity = [1, 1, 1, 1, 10, 10, 10];
+
+q0 = zeros(1,n_dofs);
+affine0 = LWR.fkine(q0);
 
 %% Optimization
 
@@ -38,8 +41,10 @@ A = [];
 b = [];
 Aeq = [];
 beq = [];
-%x_ee = [0.4; 0.3; 0.2];
-x_ee = rand(3,1);
+x_ee = [0.4; 0.3; 0.2];
+% x_ee = rand(3,1);
+affine0.t = x_ee;
+q0 = LWR.ikcon(affine0);
 radius = 0.19;
 % nonlcon = [];
 cartPointCon = @(q) cartesianEE7DoFsConstraint(LWR,q,x_ee);
@@ -47,7 +52,7 @@ cartSphereCon = @(q) cartesianEESphere7DoFsConstraint(LWR,q,x_ee,radius);
 
 % optimization with 'sqp'
 options_sqp = optimoptions(@fmincon, 'Algorithm', 'sqp', 'Display', 'off');
-trials = 50;
+trials = 1;
 change_counter = 0;
 fatigue_opt_constr_sqp = 1000;
 fatigue_opt_constr_sqp_sphere = 1000;
@@ -171,22 +176,22 @@ alpha 0.5
 pause;
 
 disp('SHOWING SQP CONFIGURATION WITH SPHERE CONSTRAINT')
-delete(h);
+%delete(h); 
 LWR.plot(q_opt_constr_sqp_sphere);
 h = quiver3(x_opt_constr_sqp_sphere(1), x_opt_constr_sqp_sphere(2), x_opt_constr_sqp_sphere(3), f_ext_scaled(1), f_ext_scaled(2), f_ext_scaled(3));
 pause;
 
 delete(h);
-delete(s1);
+%delete(s1);
 disp('SHOWING TORQUE-BASED SQP CONFIGURATION WITH POINT CONSTRAINT')
 LWR.plot(q_min_eff);
 hold on
 h = quiver3(x_min_eff(1), x_min_eff(2), x_min_eff(3), f_ext_scaled(1), f_ext_scaled(2), f_ext_scaled(3));
 pause;
 
-[x, y, z] = sphere;
-s1 = mesh(radius*x+x_ee(1), radius*y+x_ee(2), radius*z+x_ee(3));
-alpha 0.5
+% [x, y, z] = sphere;
+% s1 = mesh(radius*x+x_ee(1), radius*y+x_ee(2), radius*z+x_ee(3));
+% alpha 0.5
 
 disp('SHOWING SQP CONFIGURATION WITH SPHERE CONSTRAINT')
 delete(h);

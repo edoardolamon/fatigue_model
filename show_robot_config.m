@@ -7,7 +7,7 @@ clc
 addpath('7DoFs')
 %data_path = 'data/7DoFs_opt_conf_2018_05_08_10_19_20.mat';
 %data_path = 'data/7DoFs_opt_conf_2018_05_08_11_55_40.mat';
-data_path = 'data/7DoFs_opt_conf_2018_05_09_17_17_48.mat';
+data_path = 'data/7DoFs_opt_conf_2018_05_10_13_09_44.mat';
 load(data_path);
 
 %% computations 
@@ -48,16 +48,16 @@ h = quiver3(x_opt_constr_sqp_sphere(1), x_opt_constr_sqp_sphere(2), x_opt_constr
 pause;
 
 delete(h);
-delete(s1);
+%delete(s1);
 disp('SHOWING TORQUE-BASED SQP CONFIGURATION WITH POINT CONSTRAINT')
 LWR.plot(q_min_eff);
 hold on
 h = quiver3(x_min_eff(1), x_min_eff(2), x_min_eff(3), f_ext_scaled(1), f_ext_scaled(2), f_ext_scaled(3));
 pause;
 
-[x, y, z] = sphere;
-s1 = mesh(radius*x+x_ee(1), radius*y+x_ee(2), radius*z+x_ee(3));
-alpha 0.5
+% [x, y, z] = sphere;
+% s1 = mesh(radius*x+x_ee(1), radius*y+x_ee(2), radius*z+x_ee(3));
+% alpha 0.5
 
 disp('SHOWING SQP CONFIGURATION WITH SPHERE CONSTRAINT')
 delete(h);
