@@ -42,9 +42,12 @@ b = [];
 Aeq = [];
 beq = [];
 %x_ee = [0.4; 0.3; 0.2];
-x_ee = rand(3,1);
-affine0.t = x_ee;
-q0 = LWR.ikcon(affine0);
+% x_ee = rand(3,1);
+% affine0.t = x_ee;
+% % q0 = LWR.ikcon(affine0);
+% q0 = LWR.ikinem(affine0);
+q0 = 1.2*rand(1, n_dofs) - 0.5;
+x_ee = LWR.fkine(q0).t;
 radius = 0.19;
 % nonlcon = [];
 cartPointCon = @(q) cartesianEE7DoFsConstraint(LWR,q,x_ee);
@@ -52,7 +55,7 @@ cartSphereCon = @(q) cartesianEESphere7DoFsConstraint(LWR,q,x_ee,radius);
 
 % optimization with 'sqp'
 options_sqp = optimoptions(@fmincon, 'Algorithm', 'sqp', 'Display', 'off');
-trials = 10;
+trials = 1;
 change_counter = 0;
 fatigue_opt_constr_sqp = 1000;
 fatigue_opt_constr_sqp_sphere = 1000;
@@ -65,7 +68,7 @@ disp('GLOBAL SEARCH ...')
 for i=1:trials
     
     % random initial condition
-    q0 = rand(1,n_dofs) - 0.5;
+    %q0 = rand(1,n_dofs) - 0.5;
 %     fatigue0 = fatigue7DoFs(LWR,q0,f_ext,duration,capacity);
 
     % fatigue-based configuration with cartesian point constraint
@@ -144,6 +147,8 @@ disp('DONE !')
 %% further computations
 [tau0_sum, tau0] = torque7DoFs(LWR, q0, f_ext);
 [fatigue0, fatigue0_vec] = fatigue7DoFs(LWR, q0, f_ext, duration, capacity);
+x0_fkine = LWR.fkine(q0).t;
+[~, c_constr0] = cartesianEE7DoFsConstraint(LWR, q0, x_ee);
 
 x_opt_constr_sqp = LWR.fkine(q_opt_constr_sqp).t;
 [~, c_constr_sqp] = cartesianEE7DoFsConstraint(LWR, q_opt_constr_sqp, x_ee);
@@ -166,6 +171,7 @@ x_min_eff_sphere = LWR.fkine(q_min_eff_sphere).t;
 [tau_min_eff_sum_sphere, tau_min_eff_sphere] = torque7DoFs(LWR, q_min_eff_sphere, f_ext);
 
 %% Plots
+subplot(2,3,[1 2 4 5]);
 disp('SHOWING INITIAL CONFIGURATION')
 LWR.plot(q0);
 hold on
@@ -209,11 +215,13 @@ LWR.plot(q_min_eff_sphere);
 h = quiver3(x_min_eff_sphere(1), x_min_eff_sphere(2), x_min_eff_sphere(3), f_ext_scaled(1), f_ext_scaled(2), f_ext_scaled(3));
 pause;
 
-figure
+% figure
+subplot(2,3,3);
 bar3([fatigue0_vec, fatigue_vec_opt, fatigue_vec_opt_sphere, fatigue_vec_min_eff, fatigue_vec_min_eff_sphere]);
 title('Fatigue of every configuration')
 
-figure
+%figure
+subplot(2,3,6);
 bar3(abs([tau0 ,tau_opt, tau_opt_sphere, tau_min_eff, tau_min_eff_sphere]));
 title('Absolute value of torque of every configuration')
 
@@ -232,8 +240,8 @@ disp(['Initial configuration: ', num2str(q0)]);
 disp(['Fatigue: ' num2str(fatigue0) ]);
 disp(['Sum of squared torques: ' num2str(tau0_sum) ]);
 %disp(['Torques: ' num2str(tau_opt') ]);
-% disp(['Cart pos: ' num2str()]);
-% disp(['Constraint value: ' num2str()]);
+disp(['Cart pos: ' num2str(x0_fkine')]);
+disp(['Constraint value: ' num2str(c_constr0')]);
 disp(' ');
 disp(['Fatigue-based optimal configuration (point const): ', num2str(q_opt_constr_sqp)]);
 disp(['Fatigue: ' num2str(fatigue_opt_constr_sqp) ]);
