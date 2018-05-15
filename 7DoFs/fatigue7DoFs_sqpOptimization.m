@@ -41,13 +41,13 @@ A = [];
 b = [];
 Aeq = [];
 beq = [];
-%x_ee = [0.4; 0.3; 0.2];
 % x_ee = rand(3,1);
 % affine0.t = x_ee;
 % % q0 = LWR.ikcon(affine0);
 % q0 = LWR.ikinem(affine0);
-q0 = 1.2*rand(1, n_dofs) - 0.5;
+q0 = 1.5*(rand(1, n_dofs) - 1);
 x_ee = LWR.fkine(q0).t;
+% x_ee = [0.4; 0.3; 0.2];
 radius = 0.19;
 % nonlcon = [];
 cartPointCon = @(q) cartesianEE7DoFsConstraint(LWR,q,x_ee);
@@ -176,6 +176,11 @@ disp('SHOWING INITIAL CONFIGURATION')
 LWR.plot(q0);
 hold on
 h = quiver3(x_ee(1), x_ee(2), x_ee(3), f_ext_scaled(1), f_ext_scaled(2), f_ext_scaled(3));
+
+subplot(2,3,3);
+fatigue_plot = bar3([fatigue0_vec]);%, fatigue_vec_opt, fatigue_vec_opt_sphere, fatigue_vec_min_eff, fatigue_vec_min_eff_sphere]);
+title('Fatigue of every configuration')
+
 pause;
 
 delete(h);
@@ -217,12 +222,12 @@ pause;
 
 % figure
 subplot(2,3,3);
-bar3([fatigue0_vec, fatigue_vec_opt, fatigue_vec_opt_sphere, fatigue_vec_min_eff, fatigue_vec_min_eff_sphere]);
+fatigue_plot = bar3([fatigue0_vec, fatigue_vec_opt, fatigue_vec_opt_sphere, fatigue_vec_min_eff, fatigue_vec_min_eff_sphere]);
 title('Fatigue of every configuration')
 
 %figure
 subplot(2,3,6);
-bar3(abs([tau0 ,tau_opt, tau_opt_sphere, tau_min_eff, tau_min_eff_sphere]));
+tau_plot = bar3(abs([tau0 ,tau_opt, tau_opt_sphere, tau_min_eff, tau_min_eff_sphere]));
 title('Absolute value of torque of every configuration')
 
 %% saving data
@@ -231,7 +236,9 @@ save(data_name, 'LWR', 'f_ext', 'x_ee', 'radius', 'q_opt_constr_sqp', 'q_opt_con
 'fatigue_opt_constr_sqp', 'fatigue_opt_constr_sqp_sphere', 'duration', 'capacity', ...
 'q_min_eff', 'q_min_eff_sphere', 'fatigue_min_eff', 'fatigue_min_eff_sphere', ... 
 'tau_min_eff', 'tau_min_eff_sphere','tau_opt_sum', 'tau_opt', 'tau_opt_sum_sphere', 'tau_opt_sphere', ...
-'tau_min_eff_sum', 'tau_min_eff_sum_sphere');
+'tau_min_eff_sum', 'tau_min_eff_sum_sphere', 'q0', 'fatigue0', 'tau0_sum', ... 
+'fatigue0_vec', 'fatigue_vec_opt', 'fatigue_vec_opt_sphere', 'fatigue_vec_min_eff', 'fatigue_vec_min_eff_sphere',...
+'tau0' ,'tau_opt', 'tau_opt_sphere', 'tau_min_eff', 'tau_min_eff_sphere');
 disp('Results saved')
 
 %% results
