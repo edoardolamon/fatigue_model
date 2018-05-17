@@ -23,12 +23,12 @@ f_ext(3) = 0;
 f_ext_scaled = 0.4/norm(f_ext)*f_ext;
 
 duration = 1;
-capacity = ones(n_dofs,1);
+capacity = 10 * ones(n_dofs,1);
 % capacity = [10, 10, 10, 5, 1, 1, 1];
 % capacity = [1, 1, 1, 1, 10, 10, 10];
 
-q0 = zeros(1,n_dofs);
-affine0 = LWR.fkine(q0);
+% q0 = zeros(1,n_dofs);
+% affine0 = LWR.fkine(q0);
 
 %% Optimization
 
@@ -56,11 +56,11 @@ cartSphereCon = @(q) cartesianEESphere7DoFsConstraint(LWR,q,x_ee,radius);
 % optimization with 'sqp'
 options_sqp = optimoptions(@fmincon, 'Algorithm', 'sqp', 'Display', 'off');
 trials = 1;
-change_counter = 0;
-fatigue_opt_constr_sqp = 1000;
-fatigue_opt_constr_sqp_sphere = 1000;
-tau_min_eff = 10000;
-tau_min_eff_sphere = 10000;
+% change_counter = 0;
+% fatigue_opt_constr_sqp = 10000000;
+% fatigue_opt_constr_sqp_sphere = 1000000;
+% tau_min_eff = 1000000000;
+% tau_min_eff_sphere = 100000000;
 
 
 disp('GLOBAL SEARCH ...')
@@ -73,34 +73,34 @@ for i=1:trials
 
     % fatigue-based configuration with cartesian point constraint
     [q_opt_constr_sqp_tmp, fatigue_opt_constr_sqp_tmp] = fmincon(@(q)fatigue7DoFs(LWR,q,f_ext,duration,capacity),q0,A,b,Aeq,beq,q_lb,q_ub,cartPointCon,options_sqp);
-    if (fatigue_opt_constr_sqp_tmp < fatigue_opt_constr_sqp)
+    %if (fatigue_opt_constr_sqp_tmp < fatigue_opt_constr_sqp)
         fatigue_opt_constr_sqp = fatigue_opt_constr_sqp_tmp;
         q_opt_constr_sqp = q_opt_constr_sqp_tmp;
-        change_counter = change_counter + 1;
-    end
+%         change_counter = change_counter + 1;
+    %end
     
     % fatigue-based configuration with sphere point constraint
     [q_opt_constr_sqp_sphere_tmp, fatigue_opt_constr_sqp_sphere_tmp] = fmincon(@(q)fatigue7DoFs(LWR,q,f_ext,duration,capacity),q0,A,b,Aeq,beq,q_lb,q_ub,cartSphereCon,options_sqp);
-    if (fatigue_opt_constr_sqp_sphere_tmp < fatigue_opt_constr_sqp_sphere)
+    %if (fatigue_opt_constr_sqp_sphere_tmp < fatigue_opt_constr_sqp_sphere)
         fatigue_opt_constr_sqp_sphere = fatigue_opt_constr_sqp_sphere_tmp;
         q_opt_constr_sqp_sphere = q_opt_constr_sqp_sphere_tmp;
-    end
+   % end
     
     % torque-based configuration with cartesian point constraint
     [q_min_eff_tmp, tau_min_eff_sum_tmp, tau_min_eff_tmp] = fmincon(@(q)torque7DoFs(LWR,q,f_ext),q0,A,b,Aeq,beq,q_lb,q_ub,cartPointCon,options_sqp);
-    if (tau_min_eff_tmp < tau_min_eff)
+    %if (tau_min_eff_tmp < tau_min_eff)
         tau_min_eff = tau_min_eff_tmp;
         tau_min_eff_sum = tau_min_eff_sum_tmp;
         q_min_eff = q_min_eff_tmp;
-    end
+    %end
     
     % torque-based configuration with sphere point constraint
     [q_min_eff_sphere_tmp, tau_min_eff_sum_sphere_tmp, tau_min_eff_sphere_tmp] = fmincon(@(q)torque7DoFs(LWR,q,f_ext),q0,A,b,Aeq,beq,q_lb,q_ub,cartSphereCon,options_sqp);
-    if (tau_min_eff_sphere_tmp < tau_min_eff_sphere)
+    %if (tau_min_eff_sphere_tmp < tau_min_eff_sphere)
         tau_min_eff_sphere = tau_min_eff_sphere_tmp;
         tau_min_eff_sum_sphere = tau_min_eff_sum_sphere_tmp;
         q_min_eff_sphere = q_min_eff_sphere_tmp;
-    end
+   % end
     
     disp(['Trial ' num2str(i) ' computed.'])
 end
@@ -177,9 +177,9 @@ LWR.plot(q0);
 hold on
 h = quiver3(x_ee(1), x_ee(2), x_ee(3), f_ext_scaled(1), f_ext_scaled(2), f_ext_scaled(3));
 
-subplot(2,3,3);
-fatigue_plot = bar3([fatigue0_vec]);%, fatigue_vec_opt, fatigue_vec_opt_sphere, fatigue_vec_min_eff, fatigue_vec_min_eff_sphere]);
-title('Fatigue of every configuration')
+% subplot(2,3,3);
+% fatigue_plot = bar3([fatigue0_vec]);%, fatigue_vec_opt, fatigue_vec_opt_sphere, fatigue_vec_min_eff, fatigue_vec_min_eff_sphere]);
+% title('Fatigue of every configuration')
 
 pause;
 
@@ -224,7 +224,6 @@ pause;
 subplot(2,3,3);
 fatigue_plot = bar3([fatigue0_vec, fatigue_vec_opt, fatigue_vec_opt_sphere, fatigue_vec_min_eff, fatigue_vec_min_eff_sphere]);
 title('Fatigue of every configuration')
-
 %figure
 subplot(2,3,6);
 tau_plot = bar3(abs([tau0 ,tau_opt, tau_opt_sphere, tau_min_eff, tau_min_eff_sphere]));
